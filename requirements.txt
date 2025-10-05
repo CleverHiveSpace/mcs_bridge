@@ -1,0 +1,13 @@
+# Core dependencies (always required)
+requests
+socketio
+websocket-client
+python-socketio
+python-dotenv
+
+# ROS2 dependencies (only required for --bridge-type ros2)
+# These must be installed via ROS2 package manager:
+#   - rclpy
+#   - nav_msgs
+#   - sensor_msgs
+# See: https://docs.ros.org/en/humble/Installation.html
