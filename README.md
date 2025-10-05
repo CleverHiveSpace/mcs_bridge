@@ -41,7 +41,7 @@ If you want to run the container with the same network configuration as `mcs-sim
 
 ```bash
 docker run -it \
-   --network host --ipc host \
+   --network host --ipc host --env-file net.env \
    mcs-bridge \
    --bridge-type dummy \
    --username username \

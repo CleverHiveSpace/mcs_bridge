@@ -27,10 +27,12 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Install ROS2 Python packages
+# Install ROS2 Python packages and RMW implementations
 RUN apt-get update && apt-get install -y \
     ros-humble-nav-msgs \
     ros-humble-sensor-msgs \
+    ros-humble-rmw-cyclonedds-cpp \
+    ros-humble-rmw-fastrtps-cpp \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the application code and setup files
