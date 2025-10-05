@@ -30,6 +30,25 @@ Bridges telemetry data (position, IMU, and sensors) to the MCS backend via WebSo
       --bridge-type dummy
    ```
 
+If you want to run interactive bash in the container, run:
+
+```
+docker run -it \
+   --entrypoint="" mcs-bridge bash
+```
+
+If you want to run the container with the same network configuration as `mcs-simulation`, run:
+
+```bash
+docker run -it \
+   --network host --ipc host \
+   mcs-bridge \
+   --bridge-type dummy \
+   --username username \
+   --password password \
+   --rover-id rover_id
+```
+
 ## Architecture
 
 - `main.py` - Entry point with CLI argument parsing and bridge selection
