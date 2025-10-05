@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  mcs-bridge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcs-bridge
+    restart: unless-stopped
+    
+    # Environment variables (can be overridden)
+    environment:
+      # Authentication credentials
+      - USERNAME=${USERNAME:-}
+      - PASSWORD=${PASSWORD:-}
+      - ROVER_ID=${ROVER_ID:-}
+      
+      # Backend configuration
+      - BACKEND_URL=${BACKEND_URL:-https://api.rovers.website}
+      - WS_NAMESPACE=${WS_NAMESPACE:-/ws/robot}
+      
+      # ROS2 topic configuration
+      - ODOM_TOPIC=${ODOM_TOPIC:-/odometry/filtered}
+      - IMU_TOPIC=${IMU_TOPIC:-/imu_broadcaster/imu}
+      
+      # IMU sensor configuration
+      - IMU_ACCEL_X_NAME=${IMU_ACCEL_X_NAME:-imu_accel_x}
+      - IMU_ACCEL_Y_NAME=${IMU_ACCEL_Y_NAME:-imu_accel_y}
+      - IMU_ACCEL_Z_NAME=${IMU_ACCEL_Z_NAME:-imu_accel_z}
+      - IMU_ACCEL_UNIT=${IMU_ACCEL_UNIT:-m/s2}
+    
+    # Network configuration for ROS2
+    network_mode: host
+    
+    # Volume mounts (optional - for persistent data or custom configs)
+    volumes:
+      # Mount .env file if it exists
+      - ./.env:/workspace/.env:ro
+      # Mount custom config directory if needed
+      - ./config:/workspace/config:ro
+    
+    # Default command - can be overridden
+    command: ["--bridge-type", "dummy", "--help"]
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import mcs_bridge; print('OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Example service for ROS2 bridge with specific parameters
+  mcs-bridge-ros2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcs-bridge-ros2
+    restart: unless-stopped
+    
+    environment:
+      - USERNAME=${USERNAME:-}
+      - PASSWORD=${PASSWORD:-}
+      - ROVER_ID=${ROVER_ID:-}
+      - BACKEND_URL=${BACKEND_URL:-https://api.rovers.website}
+      - WS_NAMESPACE=${WS_NAMESPACE:-/ws/robot}
+      - ODOM_TOPIC=${ODOM_TOPIC:-/odometry/filtered}
+      - IMU_TOPIC=${IMU_TOPIC:-/imu_broadcaster/imu}
+    
+    network_mode: host
+    
+    volumes:
+      - ./.env:/workspace/.env:ro
+    
+    # ROS2 bridge command
+    command: ["--bridge-type", "ros2"]
+    
+    profiles:
+      - ros2  # Use: docker-compose --profile ros2 up
+
+  # Example service for dummy bridge with specific parameters
+  mcs-bridge-dummy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcs-bridge-dummy
+    restart: unless-stopped
+    
+    environment:
+      - USERNAME=${USERNAME:-test_user}
+      - PASSWORD=${PASSWORD:-test_pass}
+      - ROVER_ID=${ROVER_ID:-test_rover}
+      - BACKEND_URL=${BACKEND_URL:-https://api.rovers.website}
+      - WS_NAMESPACE=${WS_NAMESPACE:-/ws/robot}
+    
+    network_mode: host
+    
+    volumes:
+      - ./.env:/workspace/.env:ro
+    
+    # Dummy bridge command
+    command: ["--bridge-type", "dummy"]
+    
+    profiles:
+      - dummy  # Use: docker-compose --profile dummy up

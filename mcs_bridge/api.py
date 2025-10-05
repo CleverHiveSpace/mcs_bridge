@@ -1,7 +1,7 @@
 import time
 import requests
 import socketio
-from config import BACKEND_URL, WS_NAMESPACE
+from .config import BACKEND_URL, WS_NAMESPACE
 
 
 class MCSClient:

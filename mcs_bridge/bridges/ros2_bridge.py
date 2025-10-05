@@ -7,7 +7,7 @@ from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
 
 from .base import TelemetryBridge
-from config import (
+from ..config import (
     ODOM_TOPIC,
     IMU_TOPIC,
     IMU_ACCEL_X_NAME,

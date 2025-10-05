@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import sys
-from config import USERNAME, PASSWORD, ROVER_ID
+from .config import USERNAME, PASSWORD, ROVER_ID
 
 
 def parse_args():
@@ -90,12 +90,12 @@ def main():
     print()
 
     # Import API client (always needed)
-    from api import MCSClient
+    from .api import MCSClient
 
     # Import bridge implementation based on selection
     if args.bridge_type == "ros2":
         try:
-            from bridges.ros2_bridge import ROS2Bridge as BridgeClass
+            from .bridges.ros2_bridge import ROS2Bridge as BridgeClass
         except ImportError as e:
             print("✗ Error: ROS2 bridge requires ROS2 dependencies.")
             print(f"   Missing dependency: {e}")
@@ -108,7 +108,7 @@ def main():
             )
             sys.exit(1)
     elif args.bridge_type == "dummy":
-        from bridges.dummy_bridge import DummyBridge as BridgeClass
+        from .bridges.dummy_bridge import DummyBridge as BridgeClass
     else:
         print(f"✗ Unknown bridge type: {args.bridge_type}")
         sys.exit(1)

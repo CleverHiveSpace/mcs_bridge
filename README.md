@@ -2,6 +2,34 @@
 
 Bridges telemetry data (position, IMU, and sensors) to the MCS backend via WebSocket.
 
+## Run with Docker
+
+1. Build:
+   ```bash
+   docker build -t mcs-bridge .
+   ```
+2. Verify:
+   ```bash
+   docker run -it mcs-bridge --help
+   ```
+3. Run with dummy bridge:
+   ```bash
+   docker run -it mcs-bridge \
+    --bridge-type dummy \
+    --username username \
+    --password password \
+    --rover-id rover_id
+   ```
+   OR
+   ```
+   docker run -it \
+    -e USERNAME=username \
+    -e PASSWORD=password \
+    -e ROVER_ID=rover_id \
+    mcs-bridge \
+      --bridge-type dummy
+   ```
+
 ## Architecture
 
 - `main.py` - Entry point with CLI argument parsing and bridge selection
