@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 
 env_path = Path(__file__).parent.parent / ".env"
-load_dotenv(env_path)
+load_dotenv(env_path, override=True)
 
 
 BACKEND_URL = os.getenv("BACKEND_URL", "https://api.rovers.website")
