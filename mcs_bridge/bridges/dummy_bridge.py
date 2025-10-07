@@ -83,13 +83,24 @@ class DummyBridge(TelemetryBridge):
                 else:
                     print("✗ Failed to send sensor data")
 
-                # Send additional dummy sensor
+                # Send additional dummy sensors
                 if iteration % 5 == 0:
                     battery_level = max(0, 100 - (iteration / 10))
                     self.client.send_sensor(
                         self.rover_id, "battery_level", battery_level, "%"
                     )
                     print(f"→ Battery: {battery_level:.1f}%")
+
+                # Send temperature data every iteration
+                # Simulate realistic temperature fluctuations (20-40°C)
+                base_temp = 25.0  # Base temperature in Celsius
+                temp_variation = 15.0 * math.sin(iteration * 0.1) + random.uniform(-2.0, 2.0)
+                temperature = base_temp + temp_variation
+
+                if self.client.send_sensor(self.rover_id, "temperature", temperature, "°C"):
+                    print(f"→ Temperature: {temperature:.1f}°C")
+                else:
+                    print("✗ Failed to send temperature data")
 
                 print()
                 iteration += 1
