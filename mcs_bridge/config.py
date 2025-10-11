@@ -23,8 +23,8 @@ IMU_TOPIC = os.getenv("IMU_TOPIC", "/imu_broadcaster/imu")
 MAX_PUBLISH_RATE = float(os.getenv("MAX_PUBLISH_RATE", "4"))
 
 POSITION_MULTIPLIER = float(os.getenv("POSITION_MULTIPLIER", "0.09"))
-POSITION_X_OFFSET = float(os.getenv("POSITION_X_OFFSET", "53.383328"))
-POSITION_Y_OFFSET = float(os.getenv("POSITION_Y_OFFSET", "-16.951904"))
+POSITION_X_OFFSET = float(os.getenv("POSITION_X_OFFSET", "39.470125"))
+POSITION_Y_OFFSET = float(os.getenv("POSITION_Y_OFFSET", "-8.041992"))
 
 # Sensor configuration
 IMU_ACCEL_X_NAME = os.getenv("IMU_ACCEL_X_NAME", "imu_accel_x")

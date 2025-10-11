@@ -1,6 +1,7 @@
 """ROS2 bridge implementation for telemetry data."""
 
 import math
+from re import A
 import time
 import rclpy
 from rclpy.node import Node
@@ -39,7 +40,9 @@ class ROS2TelemetryNode(Node):
         self.client = client
 
         # Rate limiting: track last publish time for each topic
-        self.min_publish_interval = 1.0 / MAX_PUBLISH_RATE if MAX_PUBLISH_RATE > 0 else 0
+        self.min_publish_interval = (
+            1.0 / MAX_PUBLISH_RATE if MAX_PUBLISH_RATE > 0 else 0
+        )
         self.last_odom_publish_time = 0.0
         self.last_imu_publish_time = 0.0
 
@@ -54,9 +57,17 @@ class ROS2TelemetryNode(Node):
         self.get_logger().info(f"MCS Bridge Node initialized for rover: {rover_id}")
         self.get_logger().info(f"Subscribed to {ODOM_TOPIC}")
         self.get_logger().info(f"Subscribed to {IMU_TOPIC}")
-        self.get_logger().info(f"Max publish rate: {MAX_PUBLISH_RATE} Hz (min interval: {self.min_publish_interval:.2f}s)")
-        if POSITION_MULTIPLIER != 1.0 or POSITION_X_OFFSET != 0.0 or POSITION_Y_OFFSET != 0.0:
-            self.get_logger().info(f"Position transform: (input * {POSITION_MULTIPLIER}) + offset(x={POSITION_X_OFFSET}, y={POSITION_Y_OFFSET})")
+        self.get_logger().info(
+            f"Max publish rate: {MAX_PUBLISH_RATE} Hz (min interval: {self.min_publish_interval:.2f}s)"
+        )
+        if (
+            POSITION_MULTIPLIER != 1.0
+            or POSITION_X_OFFSET != 0.0
+            or POSITION_Y_OFFSET != 0.0
+        ):
+            self.get_logger().info(
+                f"Position transform: (input * {POSITION_MULTIPLIER}) + offset(x={POSITION_X_OFFSET}, y={POSITION_Y_OFFSET})"
+            )
 
     def odometry_callback(self, msg):
         """Handle odometry messages."""
@@ -78,6 +89,9 @@ class ROS2TelemetryNode(Node):
                 orientation.x, orientation.y, orientation.z, orientation.w
             )
             angle_deg = math.degrees(yaw) % 360
+
+            y = -y
+            angle_deg = -angle_deg
 
             if self.client.send_position(self.rover_id, x, y, z, angle_deg):
                 self.get_logger().info(
