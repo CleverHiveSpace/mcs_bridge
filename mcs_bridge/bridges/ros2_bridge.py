@@ -1,6 +1,7 @@
 """ROS2 bridge implementation for telemetry data."""
 
 import math
+import time
 import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
@@ -10,6 +11,10 @@ from .base import TelemetryBridge
 from ..config import (
     ODOM_TOPIC,
     IMU_TOPIC,
+    MAX_PUBLISH_RATE,
+    POSITION_MULTIPLIER,
+    POSITION_X_OFFSET,
+    POSITION_Y_OFFSET,
     IMU_ACCEL_X_NAME,
     IMU_ACCEL_Y_NAME,
     IMU_ACCEL_Z_NAME,
@@ -33,6 +38,11 @@ class ROS2TelemetryNode(Node):
         self.rover_id = rover_id
         self.client = client
 
+        # Rate limiting: track last publish time for each topic
+        self.min_publish_interval = 1.0 / MAX_PUBLISH_RATE if MAX_PUBLISH_RATE > 0 else 0
+        self.last_odom_publish_time = 0.0
+        self.last_imu_publish_time = 0.0
+
         self.odom_subscription = self.create_subscription(
             Odometry, ODOM_TOPIC, self.odometry_callback, 10
         )
@@ -44,12 +54,23 @@ class ROS2TelemetryNode(Node):
         self.get_logger().info(f"MCS Bridge Node initialized for rover: {rover_id}")
         self.get_logger().info(f"Subscribed to {ODOM_TOPIC}")
         self.get_logger().info(f"Subscribed to {IMU_TOPIC}")
+        self.get_logger().info(f"Max publish rate: {MAX_PUBLISH_RATE} Hz (min interval: {self.min_publish_interval:.2f}s)")
+        if POSITION_MULTIPLIER != 1.0 or POSITION_X_OFFSET != 0.0 or POSITION_Y_OFFSET != 0.0:
+            self.get_logger().info(f"Position transform: (input * {POSITION_MULTIPLIER}) + offset(x={POSITION_X_OFFSET}, y={POSITION_Y_OFFSET})")
 
     def odometry_callback(self, msg):
         """Handle odometry messages."""
         try:
-            x = msg.pose.pose.position.x
-            y = msg.pose.pose.position.y
+            # Rate limiting: check if enough time has passed since last publish
+            current_time = time.time()
+            if current_time - self.last_odom_publish_time < self.min_publish_interval:
+                return  # Drop this message
+
+            self.last_odom_publish_time = current_time
+
+            # Apply transformation: (input * multiplier) + offset
+            x = (msg.pose.pose.position.x * POSITION_MULTIPLIER) + POSITION_X_OFFSET
+            y = (msg.pose.pose.position.y * POSITION_MULTIPLIER) + POSITION_Y_OFFSET
             z = msg.pose.pose.position.z
 
             orientation = msg.pose.pose.orientation
@@ -72,6 +93,13 @@ class ROS2TelemetryNode(Node):
     def imu_callback(self, msg):
         """Handle IMU messages."""
         try:
+            # Rate limiting: check if enough time has passed since last publish
+            current_time = time.time()
+            if current_time - self.last_imu_publish_time < self.min_publish_interval:
+                return  # Drop this message
+
+            self.last_imu_publish_time = current_time
+
             accel_x = msg.linear_acceleration.x
             accel_y = msg.linear_acceleration.y
             accel_z = msg.linear_acceleration.z
