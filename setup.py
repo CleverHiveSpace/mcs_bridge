@@ -6,6 +6,7 @@ setup(
     entry_points={
         "console_scripts": [
             "mcs-bridge=mcs_bridge.__main__:main",
+            "mcs-video-uploader=mcs_video_uploader.__main__:main",
         ],
     },
 )

@@ -1,0 +1,8 @@
+numpy<2
+requests
+python-socketio
+python-engineio
+python-dotenv
+PyYAML
+lark
+websocket-client
