@@ -7,7 +7,7 @@ env_path = Path(__file__).parent.parent / ".env"
 load_dotenv(env_path, override=True)
 
 
-BACKEND_URL = os.getenv("BACKEND_URL", "https://api.rovers.website")
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:1234")
 WS_NAMESPACE = os.getenv("WS_NAMESPACE", "/ws/robot")
 
 # Authentication credentials
