@@ -1,2 +1,0 @@
-mcs_bridge
-mcs_video_uploader
