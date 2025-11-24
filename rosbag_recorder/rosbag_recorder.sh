@@ -36,7 +36,7 @@ if [ "$AVAILABLE_SPACE" -lt "$MIN_SPACE_GB" ]; then
     exit 1
 fi
 
-
+cd /home
 # Create rosbag name with date: rosbag_2024-11-24_14-30-15
 DATE_NAME=$(date +"%Y-%m-%d_%H-%M-%S")
 
