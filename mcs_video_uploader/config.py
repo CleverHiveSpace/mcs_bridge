@@ -14,6 +14,9 @@ VIDEO_WS_NAMESPACE = os.getenv("VIDEO_WS_NAMESPACE", "/ws/video")
 USERNAME = os.getenv("USERNAME")
 PASSWORD = os.getenv("PASSWORD")
 
+# Enable/disable video uploader entirely
+VIDEO_ENABLED = os.getenv("VIDEO_ENABLED", "false").lower() in ("true", "1", "yes")
+
 VIDEO_TOPIC = os.getenv("VIDEO_TOPIC", "/navcam_front/image_raw/image_color")
 VIDEO_CAMERA_ID = os.getenv("VIDEO_CAMERA_ID", "camera-1")
 VIDEO_SEGMENT_SECONDS = float(os.getenv("VIDEO_SEGMENT_SECONDS", "5"))

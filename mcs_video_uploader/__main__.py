@@ -13,6 +13,7 @@ from .config import (
     USERNAME,
     VIDEO_ACK_TIMEOUT,
     VIDEO_CAMERA_ID,
+    VIDEO_ENABLED,
     VIDEO_IDLE_FLUSH_SECONDS,
     VIDEO_MAX_QUEUE,
     VIDEO_SEGMENT_SECONDS,
@@ -70,6 +71,10 @@ def main():
 
     _configure_logging(args.verbose)
     logger = logging.getLogger("mcs_video_uploader")
+
+    if not VIDEO_ENABLED:
+        logger.info("Video uploader is disabled (VIDEO_ENABLED=false)")
+        return
 
     if not args.username:
         logger.error("Username is required (provide via --username or env USERNAME)")
