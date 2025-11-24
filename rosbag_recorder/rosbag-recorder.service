@@ -6,11 +6,10 @@ After=network.target
 Type=simple
 User=root
 Group=root
-WorkingDirectory=/home/
-ExecStart=/bin/bash /home/record_rosbag.sh
+WorkingDirectory=/
+ExecStart=/bin/bash ~/mcs_bridge/rosbag_recorder/record_rosbag.sh
 Restart=on-failure
 RestartSec=10
-StandardError=append:/var/log/rosbag-recorder.log
 
 [Install]
 WantedBy=multi-user.target
