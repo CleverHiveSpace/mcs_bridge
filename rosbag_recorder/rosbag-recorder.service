@@ -7,7 +7,7 @@ Type=simple
 User=root
 Group=root
 WorkingDirectory=/
-ExecStart=/bin/bash /home/husarion/mcs_bridge/rosbag_recorder/record_rosbag.sh
+ExecStart=/home/husarion/mcs_bridge/rosbag_recorder/record_rosbag.bash
 Restart=on-failure
 RestartSec=10
 
