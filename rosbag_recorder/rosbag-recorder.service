@@ -6,8 +6,8 @@ After=network.target
 Type=simple
 User=root
 Group=root
-WorkingDirectory=/
-ExecStart=/home/husarion/mcs_bridge/rosbag_recorder/record_rosbag.bash
+WorkingDirectory=/home/husarion/
+ExecStart=/home/husarion/mcs_bridge/rosbag_recorder/rosbag_recorder.bash
 Restart=on-failure
 RestartSec=10
 

@@ -26,7 +26,7 @@ trap cleanup SIGINT SIGTERM
 echo "[$(date)] Starting rosbag recording service..."
 
 # Check disk space
-AVAILABLE_SPACE=$(df -BG /home/YOUR_USERNAME | awk 'NR==2 {print $4}' | sed 's/G//')
+AVAILABLE_SPACE=$(df -BG / | awk 'NR==2 {print $4}' | sed 's/G//')
 
 echo "Available disk space: ${AVAILABLE_SPACE}GB"
 echo "Required disk space: ${MIN_SPACE_GB}GB"
@@ -36,7 +36,6 @@ if [ "$AVAILABLE_SPACE" -lt "$MIN_SPACE_GB" ]; then
     exit 1
 fi
 
-cd /
 mkdir rosbag
 cd rosbag
 # Create rosbag name with date: rosbag_2024-11-24_14-30-15
