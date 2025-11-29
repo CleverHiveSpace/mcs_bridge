@@ -16,6 +16,7 @@ from ..config import (
     POSITION_MULTIPLIER,
     POSITION_X_OFFSET,
     POSITION_Y_OFFSET,
+    HEADING_OFFSET,
     IMU_ACCEL_X_NAME,
     IMU_ACCEL_Y_NAME,
     IMU_ACCEL_Z_NAME,
@@ -46,6 +47,11 @@ class ROS2TelemetryNode(Node):
         self.last_odom_publish_time = 0.0
         self.last_imu_publish_time = 0.0
 
+        # Pre-calculate heading offset in radians for coordinate rotation
+        self.heading_offset_rad = math.radians(HEADING_OFFSET)
+        self.cos_heading = math.cos(self.heading_offset_rad)
+        self.sin_heading = math.sin(self.heading_offset_rad)
+
         self.odom_subscription = self.create_subscription(
             Odometry, ODOM_TOPIC, self.odometry_callback, 10
         )
@@ -64,9 +70,12 @@ class ROS2TelemetryNode(Node):
             POSITION_MULTIPLIER != 1.0
             or POSITION_X_OFFSET != 0.0
             or POSITION_Y_OFFSET != 0.0
+            or HEADING_OFFSET != 0.0
         ):
             self.get_logger().info(
-                f"Position transform: (input * {POSITION_MULTIPLIER}) + offset(x={POSITION_X_OFFSET}, y={POSITION_Y_OFFSET})"
+                f"Position transform: multiplier={POSITION_MULTIPLIER}, "
+                f"offset(longitude={POSITION_X_OFFSET}, latitude={POSITION_Y_OFFSET}), "
+                f"heading_offset={HEADING_OFFSET}°"
             )
 
     def odometry_callback(self, msg):
@@ -79,19 +88,30 @@ class ROS2TelemetryNode(Node):
 
             self.last_odom_publish_time = current_time
 
-            # Apply transformation: (input * multiplier) + offset
-            x = (msg.pose.pose.position.x * POSITION_MULTIPLIER) + POSITION_X_OFFSET
-            y = (msg.pose.pose.position.y * POSITION_MULTIPLIER) + POSITION_Y_OFFSET
+            # Get robot's local coordinates (in meters)
+            local_x = msg.pose.pose.position.x
+            local_y = msg.pose.pose.position.y
+
+            # Rotate from robot's local frame to geographical frame (East, North)
+            # heading_offset: angle from North to robot's X-axis
+            # In ROS: X is forward, Y is left
+            # When heading_offset=0°: X points North, Y points West
+            # Note: Swapped East/North to fix 90° rotation issue
+
+            # x increases northbound, decreases southbound
+            # y increases westbound, decreases eastbound
+            north_component = local_x * self.cos_heading + local_y * self.sin_heading
+            west_component = local_x * self.sin_heading - local_y * self.cos_heading
+
+            x = (north_component * POSITION_MULTIPLIER) + POSITION_X_OFFSET
+            y = (west_component * POSITION_MULTIPLIER) + POSITION_Y_OFFSET
             z = msg.pose.pose.position.z
 
             orientation = msg.pose.pose.orientation
             yaw = quaternion_to_yaw(
                 orientation.x, orientation.y, orientation.z, orientation.w
             )
-            angle_deg = math.degrees(yaw) % 360
-
-            y = -y
-            angle_deg = -angle_deg
+            angle_deg = -math.degrees(yaw) % 360
 
             if self.client.send_position(self.rover_id, x, y, z, angle_deg):
                 self.get_logger().info(
