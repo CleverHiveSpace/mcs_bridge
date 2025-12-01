@@ -1,0 +1,15 @@
+[Unit]
+Description=ROS2 Bag Recorder
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/home/husarion/
+ExecStart=/home/husarion/mcs_bridge/rosbag_recorder/rosbag_recorder.bash
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
