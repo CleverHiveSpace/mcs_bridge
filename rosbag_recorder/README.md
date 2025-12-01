@@ -33,6 +33,8 @@ ExecStart=/home/husarion/mcs_bridge/rosbag_recorder/rosbag_recorder.bash
 
 ### 3. Copy rosbag-recorder.service
 ```bash
+# Give executable to script
+chmod +x rosbag_recorder.bash
 # Copy service file to systemd
 sudo cp rosbag-recorder.service /etc/systemd/system/rosbag-recorder.service
 # Reload systemd daemon

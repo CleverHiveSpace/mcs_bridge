@@ -45,15 +45,14 @@ echo "Starting recording: $DATE_NAME"
 
 # Record rosbag
 ros2 bag record -o "$DATE_NAME" -d $DURATION \
-    /battery \
-    /cmd_vel \
-    /diagnostics \
-    /oak/imu/data \
-    /oak/rgb/camera_info \
-    /oak/rgb/image_raw/compressed \
-    /odometry/filtered \
+    /firmware/battery_averaged \
+    /imu/data \
     /tf \
-    /tf_static &
+    /tf_static \
+    /camera/image_rect_color/compressed \
+    /camera/camera_info \
+    /wheel_odom_with_covariance \
+    /cmd_vel &
 
 BAG_PID=$!
 wait $BAG_PID
