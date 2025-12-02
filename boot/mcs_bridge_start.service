@@ -1,0 +1,15 @@
+[Unit]
+Description=MCS Bridge Start
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/
+ExecStart=/home/pi/mcs_bridge/boot/mcs_bridge_start.bash
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
