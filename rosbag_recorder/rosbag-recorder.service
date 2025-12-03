@@ -1,15 +1,17 @@
 [Unit]
 Description=ROS2 Bag Recorder
 After=network.target
+# Wait for ROS2 daemon if you use it
+After=ros2-daemon.service
 
 [Service]
 Type=simple
-User=root
-Group=root
+User=pi
 WorkingDirectory=/home/pi/
 ExecStart=/home/pi/mcs_bridge/rosbag_recorder/rosbag_recorder.bash
-Restart=on-failure
-RestartSec=10
+Restart=always
+RestartSec=5
+RuntimeMaxSec=600
 
 [Install]
 WantedBy=multi-user.target

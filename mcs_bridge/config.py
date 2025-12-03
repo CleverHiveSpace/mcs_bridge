@@ -33,8 +33,8 @@ POSITION_MULTIPLIER = float(os.getenv("POSITION_MULTIPLIER", "0.000009"))
 # Starting coordinates in geographical coordinate system
 # X_OFFSET = Longitude (east-west, typically -180 to +180)
 # Y_OFFSET = Latitude (north-south, typically -90 to +90)
-POSITION_X_OFFSET = float(os.getenv("POSITION_X_OFFSET", "50.0922077"))  # Longitude
-POSITION_Y_OFFSET = float(os.getenv("POSITION_Y_OFFSET", "19.9422842"))  # Latitude
+POSITION_X_OFFSET = float(os.getenv("POSITION_X_OFFSET", "53.175"))  # Longitude
+POSITION_Y_OFFSET = float(os.getenv("POSITION_Y_OFFSET", "16.725833"))  # Latitude
 
 # Initial heading/orientation of robot's local coordinate system
 # HEADING_OFFSET: Angle (in degrees) from North to robot's X-axis
